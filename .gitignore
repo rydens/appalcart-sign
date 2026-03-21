@@ -1,0 +1,5 @@
+fetcher
+*.o
+lib/*
+.DS_Store
+include/
