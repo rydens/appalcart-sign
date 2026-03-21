@@ -1,3 +1,4 @@
 main
 output
 *.o
+./lib
