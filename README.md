@@ -38,3 +38,6 @@ appalcart sign
 - GameDay Green     = routeID 34
 - Game Day Red      = routeID 33
 - State Farm Lot    = routeID 15
+- Pink              = routeID x
+- Grey              = routeID x
+- Wellness          = routeID x
