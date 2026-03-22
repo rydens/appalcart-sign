@@ -52,12 +52,10 @@ static void routeSwitch(Icon_t* icon, const std::string& route) {
 
 // sets the color fields
 void generateIcon(Icon_t* icon, const std::string& route) {
-    // Normalize to uppercase so "b" and "B" both work
-    std::string upper = route;
-    std::transform(upper.begin(), upper.end(), upper.begin(),
-                   [](unsigned char c){ return std::toupper(c); });
+    std::transform(route.begin(), route.end(), route.begin(),
+                   [](unsigned char c){ return c; });
  
-    routeSwitch(icon, upper);
+    routeSwitch(icon, route);
 }
 
 
