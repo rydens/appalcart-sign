@@ -34,8 +34,12 @@ int main(int argc, char *argv[]) {
     matrixOptions.parallel = 1;
     matrixOptions.show_refresh_rate = true;
 
-    AppalcartModule routeMod = AppalcartModule(37);
-    routeMod.execute();
+    AppalcartModule routeMod1 = AppalcartModule(37);
+    routeMod1.execute();
+
+    AppalcartModule routeMod2 = AppalcartModule(37);
+    routeMod2.execute();
+
 
     //load font
     const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
@@ -47,7 +51,7 @@ int main(int argc, char *argv[]) {
     }
 
   
-    //AppalcartModule * mods[] = { &routeMod };
+    AppalcartModule * mods[] = { &routeMod1, &routeMod2 };
 
     rgb_matrix::RGBMatrix * canvas = rgb_matrix::RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
     if(canvas == NULL) return 1;
@@ -75,18 +79,16 @@ int main(int argc, char *argv[]) {
     while(!interruptRecieved)   // stall till interrupt recieved
     {
         swapCanvas->Fill(0, 0, 0);
-        //for(int i = 0; i < 1; i++) {
-            //AppalcartModule * routeMod = mods[i];
-            if(routeMod.render(swapCanvas, pos1 + (0 * 50), pos1 + (0 * 10), writeHeight, writeWidth)) {
+        for(int i = 0; i < 2; i++) {
+            AppalcartModule * routeModC = mods[i];
+            if(routeModC->render(swapCanvas, 0, pos1 + (i * 10), writeHeight, writeWidth)) {
                 std::cout << "error render error";
                 return -1;
             }
 
-            //drawIcon(icon, swapCanvas, pos1, pos1);
-
-        //}
+        }
         swapCanvas = canvas->SwapOnVSync(swapCanvas);
-        usleep(delayUsec);
+        usleep(delayUsec / 2);
     }
     
 

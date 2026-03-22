@@ -13,8 +13,8 @@ int displayText(rgb_matrix::Canvas * canvas, rgb_matrix::Font * font, int x, int
 }
 
 int busDisplayText(rgb_matrix::Canvas * canvas, rgb_matrix::Font * font, int x, int y,
-                    rgb_matrix::Color color, RouteETA_t * routeEta) {
+                    rgb_matrix::Color color, std::string t){ //, RouteETA_t * routeEta) {
 
-    std::string busText = AppalcartModule::parseRouteETA(routeEta);
-    return displayText(canvas, font, x, y, color, busText);
+    //std::string busText = AppalcartModule::parseRouteETA(routeEta);
+    return displayText(canvas, font, x, y, color, t);
 }

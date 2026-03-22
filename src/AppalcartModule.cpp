@@ -8,7 +8,7 @@
 AppalcartModule::AppalcartModule(uint8_t stopID) {
     this->stopID = stopID;
     this->scrollOffset = 150;
-    this->routeETAIndex = 0;
+    //this->routeETAIndex = 0;
     this->routeETAs = std::vector<RouteETA_t>();
 }
 
@@ -21,6 +21,12 @@ int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int heigh
     rgb_matrix::Color fontColor = rgb_matrix::Color(255, 255, 0);
     const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
 
+    std::string displayStr = "";
+    for(auto route : this->routeETAs) {
+        displayStr += parseRouteETA(&route);
+        displayStr += "   ";
+    }
+
     // load font
     rgb_matrix::Font mainFont;
     if (!mainFont.LoadFont(bdfFontFile)) {
@@ -28,16 +34,19 @@ int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int heigh
         return -1;
     }
 
-    RouteETA_t rETA = (this->routeETAs).at(routeETAIndex);    
+    //RouteETA_t rETA = (this->routeETAs).at(routeETAIndex);    
+    
     // we need to parse the data from the vector
-    int length = busDisplayText(canvas, &mainFont, x + scrollOffset, y, fontColor, &rETA);
+    int length = busDisplayText(canvas, &mainFont, x + scrollOffset, y, fontColor, displayStr);
+    
 
     //int maxLength = 300;
     //std::cout << length;
     if((this->scrollOffset-- + x) + length < 0) {
-        this->routeETAIndex = (this->routeETAIndex+1) % this->routeETAs.size(); // gets next routeETA_t
         this->scrollOffset = 150 - x;
     }
+
+    //this->routeETAIndex = (this->routeETAIndex+1) % this->routeETAs.size(); // gets next routeETA_t
 
     return 0;
 }
