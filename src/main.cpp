@@ -37,20 +37,17 @@ int main(int argc, char *argv[]) {
     AppalcartModule routeMod = AppalcartModule(37);
     routeMod.execute();
 
-    // load font
+    //load font
+    const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
+
     rgb_matrix::Font mainFont;
     if (!mainFont.LoadFont(bdfFontFile)) {
         std::cout << "couldn't load font file\n";
         return -1;
     }
 
-    AppalcartModule* routeMod1 = new AppalcartModule(3);
-    AppalcartModule* routeMod2 = new AppalcartModule(4);
-    AppalcartModule* routeMod3 = new AppalcartModule(5);
-    routeMod1->execute();
-    routeMod2->execute();
-    routeMod3->execute();
-    AppalcartModule * mods[] = { routeMod1, routeMod2, routeMod3};
+  
+    //AppalcartModule * mods[] = { &routeMod };
 
     rgb_matrix::RGBMatrix * canvas = rgb_matrix::RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
     if(canvas == NULL) return 1;
@@ -71,25 +68,27 @@ int main(int argc, char *argv[]) {
     int writeHeight = canvas->height()/3;
     int writeWidth = 32;
 
-    Icon_t * icon;
-    generateIcon(icon);
+    //Icon_t * icon;
+    //generateIcon(icon);
     
+    std::cout << "about to render\n";
     while(!interruptRecieved)   // stall till interrupt recieved
     {
         swapCanvas->Fill(0, 0, 0);
-        for(int i = 0; i < 3; i++) {
-            AppalcartModule * routeMod = mods[i];
-            if(routeMod->render(swapCanvas, pos1 + (i * 50), pos1 + (i * 10), writeHeight, writeWidth)) {
+        //for(int i = 0; i < 1; i++) {
+            //AppalcartModule * routeMod = mods[i];
+            if(routeMod.render(swapCanvas, pos1 + (0 * 50), pos1 + (0 * 10), writeHeight, writeWidth)) {
                 std::cout << "error render error";
                 return -1;
             }
 
-            drawIcon(icon, swapCanvas, pos1, pos1);
+            //drawIcon(icon, swapCanvas, pos1, pos1);
 
-        }
+        //}
         swapCanvas = canvas->SwapOnVSync(swapCanvas);
         usleep(delayUsec);
     }
+    
 
     canvas->Clear();
     delete canvas;
