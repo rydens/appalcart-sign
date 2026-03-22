@@ -1,9 +1,13 @@
 #ifndef MODULE_H
 #define MODULE_H
 
-#include <string.h>
-#include "render.h"
+#include <string>
 #include <vector>
+#include "routeETA.h"
+#include "led-matrix.h"
+#include <iostream>
+
+
 
 using namespace std;
 using rgb_matrix::RGBMatrix;

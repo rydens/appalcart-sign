@@ -8,6 +8,8 @@
 #include "graphics.h"
 #include "render.h"
 #include "module.h"
+#include "routeETA.h"
+
 
 #include <unistd.h>
 #include <math.h>
@@ -48,7 +50,7 @@ int main(int argc, char *argv[]) {
     // push into routeETAS
     std::vector<RouteETA> v;
     v.push_back(redRoute);
-    
+
     RouteModule routeMod = RouteModule(3, v);
 
     Canvas * canvas = RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
