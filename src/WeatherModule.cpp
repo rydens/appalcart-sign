@@ -2,7 +2,7 @@
 
 //WeatherModule::WeatherModule() : currentForecast{} {}
 
-Forcast_t parseForecast(const cpr::Response& res) {
+Forcast_t WeatherModule::parseForecast(const cpr::Response& res) {
     Forcast_t result{};
 
     if(res.status_code != 200) {
@@ -42,8 +42,8 @@ Forcast_t parseForecast(const cpr::Response& res) {
 }
 
 void WeatherModule::execute(){
-     cpr::Response res = cpr::Get(cpr::Url{FORECAST_URL});
-     currentForecast = parseForecast(res);
+    cpr::Response res = cpr::Get(cpr::Url{FORECAST_URL});
+    currentForecast = parseForecast(res);
 }
 
 int WeatherModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width){

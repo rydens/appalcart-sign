@@ -24,10 +24,10 @@ typedef struct {
 class WeatherModule : public Module {
     private:
         Forcast_t currentForecast;
-        Forcast_t parseForecast(const cpr::Response& res);
     public:
         void execute();
         int render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width);
+        Forcast_t parseForecast(const cpr::Response& res);
         // to get currnet forcast form outside
         Forcast_t getForcast();
 };  
