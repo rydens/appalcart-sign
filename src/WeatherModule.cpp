@@ -68,8 +68,19 @@ int WeatherModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height,
         return -1;
     }
 
-    std::string temp = std::to_string(currentForecast.temperature);
-    busDisplayText(canvas, &mainFont, x, y, fontColor, temp);
+    std::string totalStr = "Current Temp: ";
+
+    // temperature
+    std::string temp = std::to_string(currentForecast.temperature); // get temperature
+    temp += currentForecast.temperatureUnit;
+
+    // windspeed
+
+
+
+    totalStr += temp;
+
+    displayText(canvas, &mainFont, x, y, fontColor, totalStr);
 
     return 0;
     // render function needs the hand of blaez

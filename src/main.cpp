@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     }
 
   
-    Module * mods[] = { &routeMod, &weatherMod };
+    Module * mods[] = { &routeMod, &routeMod, &weatherMod };
 
     rgb_matrix::RGBMatrix * canvas = rgb_matrix::RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
     if(canvas == NULL) return 1;
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
     signal(SIGINT, InterruptHandler);
 
     // speed
-    int speed = 10;
+    int speed = 3;
     int delayUsec = 1000000 / speed / mainFont.CharacterWidth('W');
     
     // x and y positions
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
     while(!interruptRecieved)   // stall till interrupt recieved
     {
         swapCanvas->Fill(0, 0, 0);
-        for(int i = 0; i < 2; i++) {
+        for(int i = 0; i < 3; i++) {
             Module * mod = mods[i];
             if(mod->render(swapCanvas, 0, pos1 + (i * 10), writeHeight, writeWidth)) {
                 std::cout << "error render error";
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 
         }
         swapCanvas = canvas->SwapOnVSync(swapCanvas);
-        usleep(delayUsec / 2);
+        usleep(delayUsec / 3);
     }
     
 
