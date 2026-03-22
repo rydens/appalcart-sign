@@ -10,7 +10,6 @@
 #include "module.h"
 #include "routeETA.h"
 
-
 #include <unistd.h>
 #include <math.h>
 #include <stdio.h>
