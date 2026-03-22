@@ -28,9 +28,16 @@ int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int heigh
         return -1;
     }
 
+    std::string displayStr = "";
+    for(auto routeEta : this->routeETAs) {
+        displayStr += AppalcartModule::parseRouteETA(&routeEta);
+        displayStr += "   ";
+    }
+
     RouteETA_t rETA = (this->routeETAs).at(routeETAIndex);    
     // we need to parse the data from the vector
-    int length = busDisplayText(canvas, &mainFont, x + scrollOffset, y, fontColor, &rETA);
+
+    int length = busDisplayText(canvas, &mainFont, x + scrollOffset, y, fontColor, displayStr);
 
     //int maxLength = 300;
     //std::cout << length;
