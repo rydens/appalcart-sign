@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <iostream>
+#include "icon.h"
 
 #include <getopt.h>
 #include <string.h>
@@ -69,6 +70,9 @@ int main(int argc, char *argv[]) {
     int writeHeight = canvas->height()/3;
     int writeWidth = 32;
 
+    Icon_t * icon;
+    generateIcon(icon);
+    
     while(!interruptRecieved)   // stall till interrupt recieved
     {
         swapCanvas->Fill(0, 0, 0);
@@ -78,6 +82,8 @@ int main(int argc, char *argv[]) {
                 std::cout << "error render error";
                 return -1;
             }
+
+            drawIcon(icon, swapCanvas, pos1, pos1);
 
         }
         swapCanvas = canvas->SwapOnVSync(swapCanvas);
