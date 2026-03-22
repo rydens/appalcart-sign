@@ -74,17 +74,22 @@ int WeatherModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height,
         return -1;
     }
 
-    std::string totalStr = "Current Temp: ";
+    std::string totalStr = "";
 
     // temperature
     std::string temp = std::to_string(currentForecast.temperature); // get temperature
     temp += currentForecast.temperatureUnit;
-
-
     totalStr += temp;
 
-    displayText(canvas, &mainFont, x, y, fontColor, totalStr);
-    displayText(canvas, &mainFont, x+10, y, fontColor, currentForecast.formatted);
+    // precip
+    std::string precip = std::to_string(currentForecast.preciptaionPercetage);
+
+    displayText(canvas, &mainFont, x, y, fontColor, totalStr); // temperature
+
+    displayText(canvas, &mainFont, x + 5, y, fontColor, precip) // preciptitation
+
+    displayText(canvas, &mainFont, x+  10, y, fontColor, currentForecast.formatted); // time
+
 
     return 0;
     // render function needs the hand of blaez
