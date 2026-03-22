@@ -13,22 +13,21 @@ OBJS = main.o render.o module.o
 #general, compiler, and linker flags
 # march=native and -mtune are for aarm64
 # -flto=thin
-CFLAGS = -Wall -O3 -march=native -mtune=native -flto=2 -g -Wextra -Wno-unused-parameter
+CFLAGS = -Wall -Werror -O3 -march=native -mtune=native -flto=2 -g -Wextra -Wno-unused-parameter
 LDFLAGS = -march=native -mtune=native -flto=2 -L$(RGB_LIB_DIR) -l$(RGB_LIB_NAME) -lrt -lm -lpthread
 LDLIBS = 
 
-main: main.o render.o module.o
-	$(CC) $(OBJS) -o main $(LDFLAGS) $(LDLIBS)
+.cpp.o:
+	$(CC) $(INCLUDES) $(CFLAGS) -o $@ $<
+
+main: $(OBJS)
+	$(CC) $(OBJS) -o sign $(LDFLAGS) $(LDLIBS)
 
 main.o: main.cpp
-	$(CC) $(INCLUDES) $(CFLAGS) -c -o main.o main.cpp
 
 render.o: render.cpp
-	$(CC) $(INCLUDES) $(CFLAGS) -c -o render.o render.cpp
 
 module.o: module.cpp 
-	$(CC) $(INCLUDES) $(CFLAGS) -c -o module.o module.cpp
 
 clean: 
-	rm -f *.o 
-	rm -f main
+	rm *.o sign
