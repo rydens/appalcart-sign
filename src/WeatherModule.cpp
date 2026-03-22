@@ -1,6 +1,17 @@
 #include "WeatherModule.h"
+#include "render.h"
+#include <string>
 
 //WeatherModule::WeatherModule() : currentForecast{} {}
+
+/**
+* Constructor for Route Module
+*
+*/
+
+WeatherModule::WeatherModule() {
+
+}
 
 Forcast_t WeatherModule::parseForecast(const cpr::Response& res) {
     Forcast_t result{};
@@ -47,6 +58,19 @@ void WeatherModule::execute(){
 }
 
 int WeatherModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width){
+    rgb_matrix::Color fontColor = rgb_matrix::Color(255, 255, 0);
+    const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
+
+    // load font
+    rgb_matrix::Font mainFont;
+    if (!mainFont.LoadFont(bdfFontFile)) {
+        std::cout << "couldn't load font file\n";
+        return -1;
+    }
+
+    std::string temp = std::to_string(currentForecast.temperature);
+    busDisplayText(canvas, &mainFont, x, y, fontColor, temp);
+
     return 0;
     // render function needs the hand of blaez
 }

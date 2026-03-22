@@ -8,6 +8,7 @@
 #include "graphics.h"
 #include "render.h"
 #include "AppalcartModule.h"
+#include "WeatherModule.h"
 
 #include <unistd.h>
 #include <math.h>
@@ -37,6 +38,9 @@ int main(int argc, char *argv[]) {
     AppalcartModule routeMod = AppalcartModule(37);
     routeMod.execute();
 
+    WeatherModule weatherMod = WeatherModule();
+    weatherMod.execute();
+
     //load font
     const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
 
@@ -47,7 +51,7 @@ int main(int argc, char *argv[]) {
     }
 
   
-    //AppalcartModule * mods[] = { &routeMod };
+    Module * mods[] = { &routeMod, &weatherMod };
 
     rgb_matrix::RGBMatrix * canvas = rgb_matrix::RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
     if(canvas == NULL) return 1;
@@ -75,18 +79,18 @@ int main(int argc, char *argv[]) {
     while(!interruptRecieved)   // stall till interrupt recieved
     {
         swapCanvas->Fill(0, 0, 0);
-        //for(int i = 0; i < 1; i++) {
-            //AppalcartModule * routeMod = mods[i];
-            if(routeMod.render(swapCanvas, pos1 + (0 * 50), pos1 + (0 * 10), writeHeight, writeWidth)) {
+        for(int i = 0; i < 2; i++) {
+            Module * mod = mods[i];
+            if(mod->render(swapCanvas, 0, pos1 + (i * 10), writeHeight, writeWidth)) {
                 std::cout << "error render error";
                 return -1;
             }
 
             //drawIcon(icon, swapCanvas, pos1, pos1);
 
-        //}
+        }
         swapCanvas = canvas->SwapOnVSync(swapCanvas);
-        usleep(delayUsec);
+        usleep(delayUsec / 2);
     }
     
 

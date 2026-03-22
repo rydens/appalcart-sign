@@ -25,6 +25,8 @@ class WeatherModule : public Module {
     private:
         Forcast_t currentForecast;
     public:
+        WeatherModule(); //const
+
         void execute();
         int render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width);
         Forcast_t parseForecast(const cpr::Response& res);
