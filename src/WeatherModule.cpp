@@ -42,8 +42,13 @@ Forcast_t WeatherModule::parseForecast(const cpr::Response& res) {
 }
 
 void WeatherModule::execute(){
+<<<<<<< HEAD
     cpr::Response res = cpr::Get(cpr::Url{FORECAST_URL});
     currentForecast = parseForecast(res);
+=======
+     cpr::Response res = cpr::Get(cpr::Url{FORECAST_URL});
+     currentForecast = parseForecast(res);
+>>>>>>> 9a58db1 (compiling, but needs some more work)
 }
 
 int WeatherModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width){
