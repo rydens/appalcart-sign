@@ -8,6 +8,7 @@
 */
 AppalcartModule::AppalcartModule(uint8_t stopID) {
     this->stopID = stopID;
+    this->stopName = "";
     this->scrollOffset = 150;
     this->routeETAIndex = 0;
     this->routeETAs = std::vector<RouteETA_t>();
@@ -29,10 +30,11 @@ int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int heigh
     }
 
     int xCurrent = 0;
+    xCurrent += rgb_matrix::DrawText(canvas, mainFont, x + scrollOffset, y, rgb_matrix::Color(255, 255, 255), this->stopName.c_str()) + 10;
     for (uint8_t index = 0; index < this->routeETAs.size(); index++) {
         
         RouteETA_t * currentRoute = &this->routeETAs[index];
-        std::string displayStr = parseRouteETA(currentRoute) + "   ";
+        std::string displayStr = parseRouteETA(currentRoute) + "  ";
         std::string colorStr = currentRoute->routeColor;
 
         Icon_t icon;
@@ -51,9 +53,9 @@ int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int heigh
 
 std::string AppalcartModule::parseRouteETA(RouteETA_t * routeEta) {
     std::string routeEtaStr = routeEta->abbr;       // R
-    routeEtaStr += " Route: ";                       // Red Route:
+    routeEtaStr += " ";                       // Red Route:
     routeEtaStr += std::to_string(routeEta->ETA);   // Red Route: 12
-    routeEtaStr += " Minutes";                     // Red Route: 12 Minutes
+    routeEtaStr += " mins";                     // Red Route: 12 Minutes
     return routeEtaStr;
 }
 
@@ -136,6 +138,24 @@ void AppalcartModule::fetchStopData(int stopID) {
         }
 
         this->routeETAs.push_back(bus);
+    }
+
+    // -- get stop name --
+    cpr::Response stopRes = cpr::Get(cpr::Url{"https://appalcart.etaspot.net/service.php"}, cpr::Parameters{
+        {"service",    "get_stops"},
+        {"stopID",     std::to_string(stopID)},
+        {"token",      "TESTING"}
+    });
+
+    if (stopRes.status_code != 200) {
+        std::cerr << "get_stops request failed\n";
+        return;
+    }
+
+    json stopData = json::parse(stopRes.text);
+
+    if (!stopData["get_stops"].empty()) {
+        this->stopName = stopData["get_stops"][0]["name"];
     }
 }
 
