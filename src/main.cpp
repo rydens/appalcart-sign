@@ -20,10 +20,23 @@
 #include <getopt.h>
 #include <string.h>
 #include <format>
+#include <thread>
+#include <chrono>
 
 volatile bool interruptRecieved = false; // for interupt handler
 static void InterruptHandler(int signo) {
     interruptRecieved = true;
+}
+
+uint8_t endModules = 0;
+std::vector<Module*> mods;
+
+void moduleExecuteTask() {
+    for (Module* m : mods) {
+        m->execute();
+    }
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    if (endModules) return;
 }
 
 int main(int argc, char *argv[]) {
@@ -35,11 +48,17 @@ int main(int argc, char *argv[]) {
     matrixOptions.parallel = 1;
     matrixOptions.show_refresh_rate = true;
 
-    AppalcartModule routeMod = AppalcartModule(37);
-    routeMod.execute();
-
+    AppalcartModule routeMod1 = AppalcartModule(37);
+    routeMod1.execute();
+    AppalcartModule routeMod2 = AppalcartModule(36);
+    routeMod2.execute();
     WeatherModule weatherMod = WeatherModule();
     weatherMod.execute();
+
+    mods = {&routeMod1, &routeMod2, &weatherMod};
+
+    // create module execute thread
+    std::thread moduleExecutor(moduleExecuteTask);
 
     //load font
     const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
@@ -49,9 +68,6 @@ int main(int argc, char *argv[]) {
         std::cout << "couldn't load font file\n";
         return -1;
     }
-
-  
-    Module * mods[] = { &routeMod, &routeMod, &weatherMod };
 
     rgb_matrix::RGBMatrix * canvas = rgb_matrix::RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
     if(canvas == NULL) return 1;
@@ -78,7 +94,7 @@ int main(int argc, char *argv[]) {
     {
         swapCanvas->Fill(0, 0, 0);
         for(int i = 0; i < 3; i++) {
-            Module * mod = mods[i];
+            Module* mod = mods[i];
             if(mod->render(swapCanvas, 0, pos1 + (i * 10), writeHeight, writeWidth)) {
                 std::cout << "error render error";
                 return -1;
@@ -93,6 +109,9 @@ int main(int argc, char *argv[]) {
 
     canvas->Clear();
     delete canvas;
+
+    endModules = 1;
+    moduleExecutor.join();
 
     return 0;
 }
