@@ -29,11 +29,11 @@ static void InterruptHandler(int signo) {
 }
 
 uint8_t endModules = 0;
-std::vector<Module> mods;
+std::vector<Module*> mods;
 
 void moduleExecuteTask() {
-    for (Module m : mods) {
-        m.execute();
+    for (Module* m : mods) {
+        m->execute();
     }
     std::this_thread::sleep_for(std::chrono::seconds(5));
     if (endModules) return;
@@ -49,13 +49,16 @@ int main(int argc, char *argv[]) {
     matrixOptions.show_refresh_rate = true;
 
     AppalcartModule routeMod1 = AppalcartModule(37);
-    AppalcartModule routeMod2 = AppalcartModule(37);
+    routeMod1.execute();
+    AppalcartModule routeMod2 = AppalcartModule(36);
+    routeMod2.execute();
     WeatherModule weatherMod = WeatherModule();
+    weatherMod.execute();
 
-    mods = {routeMod1, routeMod2, weatherMod};
+    mods = {&routeMod1, &routeMod2, &weatherMod};
 
     // create module execute thread
-    thread moduleExecutor(moduleExecuteTask);
+    std::thread moduleExecutor(moduleExecuteTask);
 
     //load font
     const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
@@ -91,8 +94,8 @@ int main(int argc, char *argv[]) {
     {
         swapCanvas->Fill(0, 0, 0);
         for(int i = 0; i < 3; i++) {
-            Module mod = mods[i];
-            if(mod.render(swapCanvas, 0, pos1 + (i * 10), writeHeight, writeWidth)) {
+            Module* mod = mods[i];
+            if(mod->render(swapCanvas, 0, pos1 + (i * 10), writeHeight, writeWidth)) {
                 std::cout << "error render error";
                 return -1;
             }
