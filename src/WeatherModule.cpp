@@ -49,6 +49,13 @@ Forcast_t WeatherModule::parseForecast(const cpr::Response& res) {
             result.humidityPercentage = period["relativeHumidity"].value("value",0);
     }
 
+    auto n = std::chrono::system_clock::now(); // get time
+    auto in = std::chrono::system_clock::to_time_t(n);
+
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&in), "%H:%M");
+
+    result.formatted = ss.str();
     return result;
 }
 
@@ -58,7 +65,7 @@ void WeatherModule::execute(){
 }
 
 int WeatherModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width){
-    rgb_matrix::Color fontColor = rgb_matrix::Color(255, 255, 0);
+    rgb_matrix::Color fontColor = rgb_matrix::Color(255, 255, 255);
     const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
 
     // load font
@@ -68,19 +75,23 @@ int WeatherModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height,
         return -1;
     }
 
-    std::string totalStr = "Current Temp: ";
+    std::string totalStr = "Temp: ";
 
     // temperature
     std::string temp = std::to_string(currentForecast.temperature); // get temperature
     temp += currentForecast.temperatureUnit;
-
-    // windspeed
-
-
-
     totalStr += temp;
 
-    displayText(canvas, &mainFont, x, y, fontColor, totalStr);
+    // precip
+    std::string precip = std::to_string(currentForecast.preciptaionPercetage);
+    precip += "%";
+
+    displayText(canvas, &mainFont, x, y, fontColor, totalStr); // temperature
+
+    displayText(canvas, &mainFont, x + 60, y, fontColor, precip); // preciptitation
+
+    displayText(canvas, &mainFont, x+90, y, fontColor, currentForecast.formatted); // time
+
 
     return 0;
     // render function needs the hand of blaez
