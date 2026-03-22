@@ -27,6 +27,7 @@ class AppalcartModule : public Module {
         uint8_t stopID;
         int scrollOffset;
         uint8_t routeETAIndex;
+        rgb_matrix::Color hexStringToColor(const char * s);
 
     public:
         AppalcartModule(uint8_t stopID);

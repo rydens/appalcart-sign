@@ -18,7 +18,6 @@ void AppalcartModule::execute() {
 }
 
 int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width) {
-    rgb_matrix::Color fontColor = rgb_matrix::Color(255, 255, 0);
     const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
 
     // load font
@@ -28,22 +27,23 @@ int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int heigh
         return -1;
     }
 
-    RouteETA_t rETA = (this->routeETAs).at(routeETAIndex);    
-    // we need to parse the data from the vector
-    int length = busDisplayText(canvas, &mainFont, x + scrollOffset, y, fontColor, &rETA);
+    int xCurrent = 0;
+    for (uint8_t index = 0; index < this->routeETAs.size(); index++) {
+        RouteETA_t * currentRoute = &this->routeETAs[index];
+        std::string displayStr = parseRouteETA(currentRoute) + "   ";
+        std::string colorStr = currentRoute->routeColor;
+        xCurrent += rgb_matrix::DrawText(canvas, mainFont, x + scrollOffset + xCurrent, y, hexStringToColor(colorStr.c_str()), displayStr.c_str());
+    }
 
-    //int maxLength = 300;
-    //std::cout << length;
-    if((this->scrollOffset-- + x) + length < 0) {
-        this->routeETAIndex = (this->routeETAIndex+1) % this->routeETAs.size(); // gets next routeETA_t
-        this->scrollOffset = 150 - x;
+    if (this->scrollOffset-- + xCurrent == 0) {
+        scrollOffset = 150;
     }
 
     return 0;
 }
 
 std::string AppalcartModule::parseRouteETA(RouteETA_t * routeEta) {
-    std::string routeEtaStr = routeEta->routeColor; // Red
+    std::string routeEtaStr = routeEta->abbr;       // R
     routeEtaStr += " Route: ";                       // Red Route:
     routeEtaStr += std::to_string(routeEta->ETA);   // Red Route: 12
     routeEtaStr += " Minutes";                     // Red Route: 12 Minutes
@@ -130,4 +130,10 @@ void AppalcartModule::fetchStopData(int stopID) {
 
         this->routeETAs.push_back(bus);
     }
+}
+
+rgb_matrix::Color AppalcartModule::hexStringToColor(const char * s) {
+    uint8_t r, g, b;
+    sscanf(s, "#%02hhx%02hhx%02hhx", &r, &g, &b);
+    return rgb_matrix::Color(r, b, g);
 }

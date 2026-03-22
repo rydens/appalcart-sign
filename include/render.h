@@ -16,6 +16,6 @@
 #include <format>
 
 int displayText(rgb_matrix::Canvas * canvas, rgb_matrix::Font * font, int x, int y, rgb_matrix::Color color, std::string text);
-int busDisplayText(rgb_matrix::Canvas * canvas, rgb_matrix::Font * font, int x, int y, rgb_matrix::Color color, RouteETA_t * routeEta);
+int busDisplayText(rgb_matrix::Canvas * canvas, rgb_matrix::Font * font, int x, int y, rgb_matrix::Color color, std::string busText);
 
 #endif // MATRIX_H
