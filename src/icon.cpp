@@ -8,8 +8,8 @@ static void setColor(Icon_t* icon , const std::string& name,
     uint8_t r, uint8_t g, uint8_t b) {
         icon->color = name;
         icon->r = r;
-        icon->g;
-        icon->b;
+        icon->g = g;
+        icon->b = b;
     }
 
 // maps the route to a color
@@ -17,7 +17,7 @@ static void routeSwitch(Icon_t* icon, const std::string& route) {
     if (route == "B")   
         setColor(icon, "Blue",0,0,255);
     else if (route == "E")
-        setColor(icon, "Express",185, 202, 225)
+        setColor(icon, "Express",185, 202, 225);
     else if (route == "G")
         setColor(icon, "Gold",220, 219, 131);
     else if (route == "GR")   
@@ -62,7 +62,7 @@ void generateIcon(Icon_t* icon, const std::string& route) {
 
 
 // replaces every "X" with the color 
-void drawIcon(Icon_t* icon, rgb_matrix::Canvas* canvas, int x, int y) {
+void drawIcon(Icon_t* icon, rgb_matrix::Canvas * canvas, int x, int y) {
     for (int row = 0; row < 11; row++) {
         for (int col = 0; col < 7; col++) {
             if (icon->arr[row][col] == 'X') {

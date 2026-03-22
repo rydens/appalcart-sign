@@ -68,8 +68,8 @@ int main(int argc, char *argv[]) {
     int writeHeight = canvas->height()/3;
     int writeWidth = 32;
 
-    //Icon_t * icon;
-    //generateIcon(icon);
+    Icon_t icon;
+    generateIcon(&icon, "B");
     
     std::cout << "about to render\n";
     while(!interruptRecieved)   // stall till interrupt recieved
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
                 return -1;
             }
 
-            //drawIcon(icon, swapCanvas, pos1, pos1);
+            drawIcon(&icon, swapCanvas, pos1, pos1);
 
         //}
         swapCanvas = canvas->SwapOnVSync(swapCanvas);
