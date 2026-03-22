@@ -53,8 +53,7 @@ std::vector<RouteETA> fetchStopData(int stopID) {
 
     json etaData = json::parse(etaRes.text);
 
-    if (etaData["get_stop_etas"].empty() ||
-        etaData["get_stop_etas"][0]["enRoute"].empty()) {
+    if (etaData["get_stop_etas"].empty() || etaData["get_stop_etas"][0]["enRoute"].empty()) {
         std::cout << "No buses en route\n";
         return results;
     }
