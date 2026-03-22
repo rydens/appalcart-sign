@@ -14,12 +14,15 @@ CFLAGS = -Wall -O3 -march=native -mtune=native -flto=2 -g -Wextra -Wno-unused-pa
 LDFLAGS = -march=native -mtune=native -flto=2 -L$(CPR_LIB_DIR) -lrt -lm -lpthread -lcpr -lcurl -lssl -lcrypto
 LDLIBS = 
 
-main: main.o
-	$(CC) main.o -o main $(LDFLAGS) $(LDLIBS)
+main: main.o routeParser.o
+	$(CC) main.o routeParser.o -o main $(LDFLAGS) $(LDLIBS)
 
-main.o: main.cpp
+main.o: main.cpp ./include/routeParser.h
 	$(CC) $(INCLUDES) $(CFLAGS) -c -o main.o main.cpp
 
+routeParser.o: routeParser.cpp ./include/routeParser.h
+	$(CC) $(INCLUDES) $(CFLAGS) -c -o routeParser.o routeParser.cpp
+
 clean: 
-	rm -f main.o 
+	rm -f main.o routeParser.o
 	rm -f main
