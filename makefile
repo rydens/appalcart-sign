@@ -1,28 +1,37 @@
 CC = g++
-#Libary Folder 
-CPR_LIB_DISTRIBUTION=./lib/cpr
 
-CPR_LIB_DIR=$(CPR_LIB_DISTRIBUTION)/lib
-CPR_LIB_NAME=cppRequest
-#include directories
-INCLUDES = -I$(CPR_LIB_DISTRIBUTION)/include
+RGB_LIB_DISTRIBUTION=../rpi-rgb-led-matrix
+RGB_LIB_DIR=$(RGB_LIB_DISTRIBUTION)/lib
+RGB_LIB_NAME=rgbmatrix
 
-#general, compiler, and linker flags
+# our directories
+SRC_DIR = src
+INCLUDE_DIR = include
+BUILD_DIR = bin
+
+# general, compiler, and linker flags
 # march=native and -mtune are for aarm64
-# -flto=thin
-CFLAGS = -Wall -O3 -march=native -mtune=native -flto=2 -g -Wextra -Wno-unused-parameter
-LDFLAGS = -march=native -mtune=native -flto=2 -L$(CPR_LIB_DIR) -lrt -lm -lpthread -lcpr -lcurl -lssl -lcrypto
-LDLIBS = 
+# -flto=2
+CFLAGS = -c -Wall -Werror -O3 -march=native -mtune=native -flto=2 -g -Wextra -Wno-unused-parameter
+LDFLAGS = -march=native -mtune=native -flto=2 -L$(RGB_LIB_DIR) -l$(RGB_LIB_NAME) -lrt -lm -lpthread
+LDLIBS = -lcpr -lcurl
 
-main: main.o routeParser.o
-	$(CC) main.o routeParser.o -o main $(LDFLAGS) $(LDLIBS)
 
-main.o: main.cpp ./include/routeParser.h
-	$(CC) $(INCLUDES) $(CFLAGS) -c -o main.o main.cpp
+# objects
+SOURCES := $(shell find $(SRC_DIR) -maxdepth 1 -name "*.cpp")
+OBJS := $(patsubst $(SRC_DIR)%.cpp, $(BUILD_DIR)%.o, $(SOURCES))
+INCLUDES := -I $(RGB_LIB_DISTRIBUTION)/include -I include
 
-routeParser.o: routeParser.cpp ./include/routeParser.h
-	$(CC) $(INCLUDES) $(CFLAGS) -c -o routeParser.o routeParser.cpp
 
-clean: 
-	rm -f main.o routeParser.o
-	rm -f main
+main: $(OBJS)
+	@mkdir -p $(BUILD_DIR)
+	$(CC) $(OBJS) -o main $(LDFLAGS) $(LDLIBS)
+	@echo "built main"
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CC) -c $< $(CFLAGS) $(INCLUDES) $(LDFLAGS) $(LDLIBS) -o $@
+
+clean:
+	rm -f $(BUILD_DIR)/*.o
+	rm main
