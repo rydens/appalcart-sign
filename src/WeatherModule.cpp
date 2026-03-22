@@ -49,15 +49,13 @@ Forcast_t WeatherModule::parseForecast(const cpr::Response& res) {
             result.humidityPercentage = period["relativeHumidity"].value("value",0);
     }
 
-    time_t timestamp = time(&timestamp);
-    struct tm datetime = *localtime(&timestamp);   
+    auto n = std::chrono::system_clock::now(); // get time
+    auto in = std::chrono::system_clock::to_time_t(n);
 
-    //result.hour = std::time.hours()(nullptr); //tm_hour;
-    //result.minute = std::time(nullptr); //->tm_min;
-    //char buffer[6];
-    //strftime(buffer, sizeof(buffer), "%H:%M", timeinfo);
-    result.formatted = datetime.tm_hour;
+    std::stringstream ss;[]
+    ss << std::put_time(std::localtime(&in_time_t), "%H-%M %X")
 
+    result.formatted = ss.str();
     return result;
 }
 
