@@ -7,6 +7,8 @@
 */
 AppalcartModule::AppalcartModule(uint8_t stopID) {
     this->stopID = stopID;
+    this->scrollOffset = 150;
+    this->routeETAIndex = 0;
     this->routeETAs = std::vector<RouteETA_t>();
 }
 
@@ -26,15 +28,16 @@ int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int heigh
         return -1;
     }
 
-    RouteETA_t redRoute;
-    redRoute.ETA = 12;
-    redRoute.routeColor = "#FF0000";
-    redRoute.equipmentID = "B12";
-    redRoute.routeName = "Red Route";
-
-
+    RouteETA_t rETA = (this->routeETAs).at(routeETAIndex);    
     // we need to parse the data from the vector
-    busDisplayText(canvas, &mainFont, 0, 10, fontColor, &redRoute);
+    int length = busDisplayText(canvas, &mainFont, x + scrollOffset, y, fontColor, &rETA);
+
+    //int maxLength = 300;
+    //std::cout << length;
+    if((this->scrollOffset-- + x) + length < 0) {
+        this->routeETAIndex = (this->routeETAIndex+1) % this->routeETAs.size(); // gets next routeETA_t
+        this->scrollOffset = 150 - x;
+    }
 
     return 0;
 }

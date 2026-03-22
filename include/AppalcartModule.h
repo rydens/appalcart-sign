@@ -25,6 +25,8 @@ class AppalcartModule : public Module {
     private:
         std::vector<RouteETA_t> routeETAs;
         uint8_t stopID;
+        int scrollOffset;
+        uint8_t routeETAIndex;
 
     public:
         AppalcartModule(uint8_t stopID);
