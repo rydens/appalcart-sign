@@ -25,6 +25,7 @@ class AppalcartModule : public Module {
     private:
         std::vector<RouteETA_t> routeETAs;
         uint8_t stopID;
+        std::string stopName;
         int scrollOffset;
         uint8_t routeETAIndex;
         rgb_matrix::Color hexStringToColor(const char * s);
