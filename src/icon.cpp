@@ -52,10 +52,12 @@ static void routeSwitch(Icon_t* icon, const std::string& route) {
 
 // sets the color fields
 void generateIcon(Icon_t* icon, const std::string& route) {
-    std::transform(route.begin(), route.end(), route.begin(),
-                   [](unsigned char c){ return c; });
+    std::string r = route
+    std::transform(r.begin(), r.end(), r.begin(),[](unsigned char c){ 
+        return std::toupper(c); 
+    });
  
-    routeSwitch(icon, route);
+    routeSwitch(icon, r);
 }
 
 
