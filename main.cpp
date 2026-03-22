@@ -6,7 +6,8 @@
 
 #include "led-matrix.h"
 #include "graphics.h"
-#include "matrix.h"
+#include "render.h"
+#include "module.h"
 
 #include <unistd.h>
 #include <math.h>
@@ -22,7 +23,6 @@ using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
 using namespace rgb_matrix;
 
-
 volatile bool interruptRecieved = false; // for interupt handler
 static void InterruptHandler(int signo) {
     interruptRecieved = true;
@@ -36,41 +36,37 @@ int main(int argc, char *argv[]) {
     matrixOptions.chain_length = 1;
     matrixOptions.parallel = 1;
     matrixOptions.show_refresh_rate = true;
-    Canvas * canvas = RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
 
-    Color fontColor = Color(255, 255, 0);
-    const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
-    if(canvas == NULL) return 1;
-
+    // till we get up to date info make own struct and push into vector
     RouteETA redRoute;
     redRoute.busID = 2;
     redRoute.ETA = 12;
     redRoute.routeColor = "Red";
     redRoute.equipmentId = "B12";
     redRoute.routeName = "Red Route";
+
+    // push into routeETAS
+    std::vector<RouteETA> v;
+    v.push_back(redRoute);
     
-    // load font
-    Font mainFont;
-    if (!mainFont.LoadFont(bdfFontFile)) {
-        std::cout << "couldn't load font file\n";
+    RouteModule routeMod = RouteModule(3, v);
+
+    Canvas * canvas = RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
+    if(canvas == NULL) return 1;
+
+    // int space = mainFont.baseline();
+    int pos1 = 10;
+    int writeHeight = canvas->height()/3;
+    int writeWidth = 32;
+
+    if(routeMod.render(canvas, 0, pos1, writeHeight, writeWidth)) {
+        std::cout << "error render error";
         return -1;
     }
-
-    int space = mainFont.baseline();
-    int pos1 = 10;
-    int pos2 = pos1+space;
-    int pos3 = pos2+space;
-    busDisplayText(canvas, &mainFont, 0, pos1, fontColor, &redRoute);
-    busDisplayText(canvas, &mainFont, 0, pos2, fontColor, &redRoute);
-    busDisplayText(canvas, &mainFont, 0, pos3, fontColor, &redRoute);
-
-
 
     // signal handler to recieve signals to exit
     signal(SIGTERM, InterruptHandler);
     signal(SIGINT, InterruptHandler);
-
-  
 
     // stall till interrupt recieved
     while(!interruptRecieved);

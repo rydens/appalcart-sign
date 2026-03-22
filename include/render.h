@@ -1,5 +1,5 @@
-#ifndef MATRIX_H
-#define MATRIX_H
+#ifndef RENDER_H
+#define RENDER_H
 
 #include "led-matrix.h"
 #include "graphics.h"
