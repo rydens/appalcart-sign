@@ -1,33 +1,37 @@
 CC = g++
 
 RGB_LIB_DISTRIBUTION=../rpi-rgb-led-matrix
-
 RGB_LIB_DIR=$(RGB_LIB_DISTRIBUTION)/lib
 RGB_LIB_NAME=rgbmatrix
 
-#include directories
-INCLUDES = -I $(RGB_LIB_DISTRIBUTION)/include -I include
+# our directories
+SRC_DIR = src
+INCLUDE_DIR = include
+BUILD_DIR = bin
 
-OBJS = main.o render.o module.o
-
-#general, compiler, and linker flags
+# general, compiler, and linker flags
 # march=native and -mtune are for aarm64
-# -flto=thin
-CFLAGS = -Wall -Werror -O3 -march=native -mtune=native -flto=2 -g -Wextra -Wno-unused-parameter
+# -flto=2
+CFLAGS = -c -Wall -Werror -O3 -march=native -mtune=native -flto=2 -g -Wextra -Wno-unused-parameter
 LDFLAGS = -march=native -mtune=native -flto=2 -L$(RGB_LIB_DIR) -l$(RGB_LIB_NAME) -lrt -lm -lpthread
-LDLIBS = 
+LDLIBS =
 
-.cpp.o:
-	$(CC) $(INCLUDES) $(CFLAGS) -o $@ $<
+
+# objects
+SOURCES := $(shell find $(SRC_DIR) -maxdepth 1 -name "*.cpp")
+OBJS := $(patsubst $(SRC_DIR)%.cpp, $(BUILD_DIR)%.o, $(SOURCES))
+INCLUDES := -I $(RGB_LIB_DISTRIBUTION)/include -I include
+
 
 main: $(OBJS)
-	$(CC) $(OBJS) -o sign $(LDFLAGS) $(LDLIBS)
+	@mkdir -p $(BUILD_DIR)
+	$(CC) $(OBJS) -o main $(LDFLAGS) $(LDLIBS)
+	@echo "built main"
 
-main.o: main.cpp
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CC) -c $< $(CFLAGS) $(INCLUDES) $(LDFLAGS) $(LDLIBS) -o $@
 
-render.o: render.cpp
-
-module.o: module.cpp 
-
-clean: 
-	rm *.o sign
+clean:
+	rm -f $(BUILD_DIR)/*.o
+	rm main

@@ -1,15 +1,13 @@
 /**
 * This is our display code.
 *
-*  
+*
 */
 
 #include "led-matrix.h"
 #include "graphics.h"
 #include "render.h"
-#include "module.h"
-#include "routeETA.h"
-
+#include "AppalcartModule.h"
 
 #include <unistd.h>
 #include <math.h>
@@ -21,17 +19,13 @@
 #include <string.h>
 #include <format>
 
-using rgb_matrix::RGBMatrix;
-using rgb_matrix::Canvas;
-using namespace rgb_matrix;
-
 volatile bool interruptRecieved = false; // for interupt handler
 static void InterruptHandler(int signo) {
     interruptRecieved = true;
 }
 
 int main(int argc, char *argv[]) {
-    RGBMatrix::Options matrixOptions;
+    rgb_matrix::RGBMatrix::Options matrixOptions;
     matrixOptions.hardware_mapping = "regular";
     matrixOptions.cols = 128;
     matrixOptions.rows = 32;
@@ -39,21 +33,10 @@ int main(int argc, char *argv[]) {
     matrixOptions.parallel = 1;
     matrixOptions.show_refresh_rate = true;
 
-    // till we get up to date info make own struct and push into vector
-    RouteETA redRoute;
-    redRoute.busID = 2;
-    redRoute.ETA = 12;
-    redRoute.routeColor = "Red";
-    redRoute.equipmentId = "B12";
-    redRoute.routeName = "Red Route";
+    AppalcartModule routeMod = AppalcartModule(3);
+    routeMod.execute();
 
-    // push into routeETAS
-    std::vector<RouteETA> v;
-    v.push_back(redRoute);
-
-    RouteModule routeMod = RouteModule(3, v);
-
-    Canvas * canvas = RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
+    rgb_matrix::Canvas * canvas = rgb_matrix::RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
     if(canvas == NULL) return 1;
 
     // int space = mainFont.baseline();
