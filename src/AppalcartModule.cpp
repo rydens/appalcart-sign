@@ -7,19 +7,12 @@
 */
 AppalcartModule::AppalcartModule(uint8_t stopID) {
     this->stopID = stopID;
+    this->routeETAs = std::vector<RouteETA_t>();
 }
 
 void AppalcartModule::execute() {
-    // till we get up to date info make own struct and push into vector
-    RouteETA_t redRoute;
-    redRoute.ETA = 12;
-    redRoute.routeColor = "#FF0000";
-    redRoute.equipmentID = "B12";
-    redRoute.routeName = "Red Route";
-
-    // push into routeETAS
-    std::vector<RouteETA_t> v;
-    v.push_back(redRoute);
+    fetchStopData(this->stopID);
+    std::cout << this->routeETAs.size() << std::endl;
 }
 
 int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width) {
@@ -52,4 +45,86 @@ std::string AppalcartModule::parseRouteETA(RouteETA_t * routeEta) {
     routeEtaStr += std::to_string(routeEta->ETA);   // Red Route: 12
     routeEtaStr += " Minutes";                     // Red Route: 12 Minutes
     return routeEtaStr;
+}
+
+
+// Fetch route info for a single routeID
+json AppalcartModule::fetchRouteInfo(int routeID, int stopID) {
+    cpr::Response res = cpr::Get(cpr::Url{"https://appalcart.etaspot.net/service.php"}, cpr::Parameters{
+        {"service", "get_routes"},
+        {"routeID", std::to_string(routeID)},
+        {"stopID",  std::to_string(stopID)},
+        {"token",   "TESTING"}
+    });
+
+    if (res.status_code != 200) {
+        std::cerr << "get_routes failed for routeID " << routeID << "\n";
+        return {};
+    }
+
+    json data = json::parse(res.text);
+
+    if (data.contains("get_routes") && !data["get_routes"].empty()) {
+        for (const auto& route : data["get_routes"]) {
+            if (route.value("id", 0) == routeID) {
+                return route;
+            }
+        }
+    }
+
+    return {};
+}
+
+void AppalcartModule::fetchStopData(int stopID) {
+    // --- Call 1: get_stop_etas ---
+    cpr::Response etaRes = cpr::Get(cpr::Url{"https://appalcart.etaspot.net/service.php"}, cpr::Parameters{
+        {"service",    "get_stop_etas"},
+        {"statusData", "1"},
+        {"stopID",     std::to_string(stopID)},
+        {"token",      "TESTING"}
+    });
+
+    if (etaRes.status_code != 200) {
+        std::cerr << "get_stop_etas request failed\n";
+        return;
+    }
+
+    json etaData = json::parse(etaRes.text);
+
+    if (etaData["get_stop_etas"].empty() || etaData["get_stop_etas"][0]["enRoute"].empty()) {
+        std::cout << "No buses en route\n";
+        return;
+    }
+
+    // --- Call 2: get_routes for each unique routeID ---
+    std::map<int, json> routeCache;
+
+    for (const auto& eta : etaData["get_stop_etas"][0]["enRoute"]) {
+        int routeID = eta.value("routeID", 0);
+        if (routeCache.count(routeID) == 0) {
+            routeCache[routeID] = fetchRouteInfo(routeID, stopID);
+        }
+    }
+
+    // --- Merge ---
+    for (const auto& eta : etaData["get_stop_etas"][0]["enRoute"]) {
+        RouteETA_t bus;
+
+        // From get_stop_etas
+        bus.ETA         = eta.value("minutes", 0);
+        bus.time        = eta.value("time", "");
+        bus.status      = eta.value("status", "");
+        bus.equipmentID = eta.value("equipmentID", "");
+        bus.routeID     = eta.value("routeID", 0);
+
+        // From get_routes, matched by routeID
+        if (routeCache.count(bus.routeID) && !routeCache[bus.routeID].empty()) {
+            const json& route = routeCache[bus.routeID];
+            bus.routeName  = route.value("name", "");
+            bus.abbr       = route.value("abbr", "");
+            bus.routeColor = route.value("color", "");
+        }
+
+        this->routeETAs.push_back(bus);
+    }
 }

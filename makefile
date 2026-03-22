@@ -14,7 +14,7 @@ BUILD_DIR = bin
 # -flto=2
 CFLAGS = -c -Wall -Werror -O3 -march=native -mtune=native -flto=2 -g -Wextra -Wno-unused-parameter
 LDFLAGS = -march=native -mtune=native -flto=2 -L$(RGB_LIB_DIR) -l$(RGB_LIB_NAME) -lrt -lm -lpthread
-LDLIBS = -lcpr -lcurl
+LDLIBS = -lcpr -lcurl -lssl -lcrypto
 
 
 # objects
