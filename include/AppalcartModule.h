@@ -21,6 +21,7 @@ class AppalcartModule : public Module {
         AppalcartModule(uint8_t stopID);
         void execute();
         int render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width);
+	static std::string parseRouteETA(RouteETA_t * routeEta);
 };
 
 #endif

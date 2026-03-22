@@ -12,7 +12,6 @@ AppalcartModule::AppalcartModule(uint8_t stopID) {
 void AppalcartModule::execute() {
     // till we get up to date info make own struct and push into vector
     RouteETA_t redRoute;
-    redRoute.busID = 2;
     redRoute.ETA = 12;
     redRoute.routeColor = "#FF0000";
     redRoute.equipmentID = "B12";
@@ -24,7 +23,7 @@ void AppalcartModule::execute() {
 }
 
 int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width) {
-    Color fontColor = Color(255, 255, 0);
+    rgb_matrix::Color fontColor = rgb_matrix::Color(255, 255, 0);
     const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
 
     // load font
@@ -37,7 +36,7 @@ int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int heigh
     RouteETA_t redRoute;
     redRoute.ETA = 12;
     redRoute.routeColor = "#FF0000";
-    redRoute.equipmentId = "B12";
+    redRoute.equipmentID = "B12";
     redRoute.routeName = "Red Route";
 
 

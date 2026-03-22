@@ -16,13 +16,15 @@ CFLAGS = -c -Wall -Werror -O3 -march=native -mtune=native -flto=2 -g -Wextra -Wn
 LDFLAGS = -march=native -mtune=native -flto=2 -L$(RGB_LIB_DIR) -l$(RGB_LIB_NAME) -lrt -lm -lpthread
 LDLIBS =
 
-INCLUDES = -I $(RGB_LIB_DISTRIBUTION)/include -I include
 
 # objects
-OBJS := $(BUILD_DIR)/*.o
+SOURCES := $(shell find $(SRC_DIR) -maxdepth 1 -name "*.cpp")
+OBJS := $(patsubst $(SRC_DIR)%.cpp, $(BUILD_DIR)%.o, $(SOURCES))
+INCLUDES := -I $(RGB_LIB_DISTRIBUTION)/include -I include
+
 
 main: $(OBJS)
-	@mkdir -p $(BIN_DIR)
+	@mkdir -p $(BUILD_DIR)
 	$(CC) $(OBJS) -o main $(LDFLAGS) $(LDLIBS)
 	@echo "built main"
 

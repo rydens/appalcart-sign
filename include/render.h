@@ -3,8 +3,7 @@
 
 #include "led-matrix.h"
 #include "graphics.h"
-
-#include "routeETA.h"
+#include "AppalcartModule.h"
 
 #include <unistd.h>
 #include <math.h>
@@ -16,13 +15,7 @@
 #include <string.h>
 #include <format>
 
-using rgb_matrix::RGBMatrix;
-using rgb_matrix::Canvas;
-using namespace rgb_matrix;
-
-
-std::string parseRouteETA(RouteETA * routeEta);
-void displayText(Canvas * canvas, Font * font, int x, int y, Color color, std::string text);
-void busDisplayText(Canvas * canvas, Font * font, int x, int y, Color color, RouteETA * routeEta);
+void displayText(rgb_matrix::Canvas * canvas, rgb_matrix::Font * font, int x, int y, rgb_matrix::Color color, std::string text);
+void busDisplayText(rgb_matrix::Canvas * canvas, rgb_matrix::Font * font, int x, int y, rgb_matrix::Color color, RouteETA_t * routeEta);
 
 #endif // MATRIX_H

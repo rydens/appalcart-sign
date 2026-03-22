@@ -25,7 +25,7 @@ static void InterruptHandler(int signo) {
 }
 
 int main(int argc, char *argv[]) {
-    rgb_matrix::Options matrixOptions;
+    rgb_matrix::RGBMatrix::Options matrixOptions;
     matrixOptions.hardware_mapping = "regular";
     matrixOptions.cols = 128;
     matrixOptions.rows = 32;
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     AppalcartModule routeMod = AppalcartModule(3);
     routeMod.execute();
 
-    rgb_matrix::Canvas * canvas = rgb_matrix::CreateFromFlags(&argc, &argv, &matrixOptions);
+    rgb_matrix::Canvas * canvas = rgb_matrix::RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
     if(canvas == NULL) return 1;
 
     // int space = mainFont.baseline();
