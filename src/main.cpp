@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     matrixOptions.parallel = 1;
     matrixOptions.show_refresh_rate = true;
 
-    AppalcartModule routeMod = AppalcartModule(3);
+    AppalcartModule routeMod = AppalcartModule(37);
     routeMod.execute();
 
     rgb_matrix::Canvas * canvas = rgb_matrix::RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
