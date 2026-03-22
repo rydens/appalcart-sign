@@ -3,20 +3,38 @@
 #include <algorithm>
 #include <cctype>
  
-// // sets icon rgb values and name
-// static void setColor(Icon_t* icon , const std::string& name,
-//     uint8_t r, uint8_t g, uint8_t b) {
-//         icon->color = name;
-//         icon->r = r;
-//         icon->g = g;
-//         icon->b = b;
-//     }
-
 static void setColor(Icon_t* icon , rgb_matrix::Color c) {
         icon->r = c.r;
         icon->g = c.g;
         icon->b = c.b;
     }
+
+// generate icon from icon, route, and color combo
+void generateIcon(Icon_t* icon, const std::string& route, rgb_matrix::Color c) {
+    std::string r = route; 
+    setColor(icon, c);
+    // std::transform(r.begin(), r.end(), r.begin(),[](unsigned char c){ 
+    //     return std::toupper(c); 
+    // });
+    //routeSwitch(icon, r);
+}
+
+
+// replaces every "X" with the color 
+int drawIcon(Icon_t* icon, rgb_matrix::Canvas * canvas, int x, int y) {
+    for (int row = 0; row < 7; row++) {
+        for (int col = 0; col < 7; col++) {
+            if (icon->arr[row][col] == 'X') {
+                canvas->SetPixel(x + col, y + row,
+                                 icon->r, icon->g, icon->b);
+            }
+        }
+    }
+
+    return 9;
+}
+
+
 
 
 // // maps the route to a color
@@ -56,29 +74,3 @@ static void setColor(Icon_t* icon , rgb_matrix::Color c) {
 //         std::cout << "generateIcon: unknown route code \"" << route << "\"\n";
 //     }
 // }
-
-// sets the color fields
-void generateIcon(Icon_t* icon, const std::string& route, rgb_matrix::Color c) {
-    std::string r = route; 
-    setColor(icon, c);
-    // std::transform(r.begin(), r.end(), r.begin(),[](unsigned char c){ 
-    //     return std::toupper(c); 
-    // });
- 
-    //routeSwitch(icon, r);
-}
-
-
-// replaces every "X" with the color 
-int drawIcon(Icon_t* icon, rgb_matrix::Canvas * canvas, int x, int y) {
-    for (int row = 0; row < 7; row++) {
-        for (int col = 0; col < 7; col++) {
-            if (icon->arr[row][col] == 'X') {
-                canvas->SetPixel(x + col, y + row,
-                                 icon->r, icon->g, icon->b);
-            }
-        }
-    }
-
-    return 9;
-}

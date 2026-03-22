@@ -49,6 +49,12 @@ Forcast_t WeatherModule::parseForecast(const cpr::Response& res) {
             result.humidityPercentage = period["relativeHumidity"].value("value",0);
     }
 
+    result.hour = timeinfo->tm_hour;
+    result.minute = timeinfo->tm_min;
+    char buffer[6];
+    strftime(buffer, sizeof(buffer), "%H:%M", timeinfo);
+    result.formatted = std::string(buffer);
+
     return result;
 }
 
@@ -74,13 +80,11 @@ int WeatherModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height,
     std::string temp = std::to_string(currentForecast.temperature); // get temperature
     temp += currentForecast.temperatureUnit;
 
-    // windspeed
-
-
 
     totalStr += temp;
 
     displayText(canvas, &mainFont, x, y, fontColor, totalStr);
+    displayText(canvas, &mainFont, x+10, y, fontColor, currentForecast.formatted);
 
     return 0;
     // render function needs the hand of blaez

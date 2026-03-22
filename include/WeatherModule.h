@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include "Module.h"
+#include <ctime>
 
 using json = nlohmann::json;
 
@@ -19,6 +20,11 @@ typedef struct {
     std::string forcast;
     int preciptaionPercetage;
     int humidityPercentage;
+
+    // time stuff
+    int hour;
+    int minute;
+    std::string formatted; // "HH:MM"
 } Forcast_t;
 
 class WeatherModule : public Module {
