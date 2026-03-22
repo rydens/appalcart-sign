@@ -6,6 +6,7 @@
 #include <cpr/cpr.h>
 
 #include "Module.h"
+#include "ColorString.h"
 
 using json = nlohmann::json;
 
@@ -24,6 +25,7 @@ typedef struct {
 class AppalcartModule : public Module {
     private:
         std::vector<RouteETA_t> routeETAs;
+        std::vector<colorString_t> colorStrVec;
         uint8_t stopID;
         int scrollOffset;
         uint8_t routeETAIndex;
@@ -31,6 +33,9 @@ class AppalcartModule : public Module {
     public:
         AppalcartModule(uint8_t stopID);
         void execute();
+
+        //void loadColors();
+
         int render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width);
 	    static std::string parseRouteETA(RouteETA_t * routeEta);
         static json fetchRouteInfo(int routeID, int stopID);

@@ -1,5 +1,6 @@
 #include "AppalcartModule.h"
 #include "render.h"
+#include "ColorString.h"
 
 /**
 * Constructor for Route Module
@@ -18,31 +19,47 @@ void AppalcartModule::execute() {
 }
 
 int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width) {
-    rgb_matrix::Color fontColor = rgb_matrix::Color(255, 255, 0);
     const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
 
     // load font
     rgb_matrix::Font mainFont;
+    rgb_matrix::Color fontColor;
+
+    std::vector<colorString_t> colorStrVec;
+
     if (!mainFont.LoadFont(bdfFontFile)) {
         std::cout << "couldn't load font file\n";
         return -1;
     }
 
-    std::string displayStr = "";
+
+    int i = 0;
     for(auto routeEta : this->routeETAs) {
+        std::string displayStr = "";
+
+        colorString_t colorStr;
+        // we are limited with color as its one big string. unfortunately.
+        // the draw function only takes 1 color arg, and we have one
+        // big string
+
+        // solution: new vector
+
+        fontColor = hexToRGB((routeEta.routeColor).c_str());
         displayStr += AppalcartModule::parseRouteETA(&routeEta);
         displayStr += "   ";
+        colorStr.c = fontColor;
+        colorStr.s = displayStr;
+        colorStr.i = i;
+
+        // add to vector
+        colorStrVec.push_back(colorStr);
+        i++;
     }
 
-    RouteETA_t rETA = (this->routeETAs).at(routeETAIndex);    
-    // we need to parse the data from the vector
+    int length = busDisplayText(canvas, &mainFont, x + scrollOffset, y, colorStrVec);
+    colorStrVec.clear();
 
-    int length = busDisplayText(canvas, &mainFont, x + scrollOffset, y, fontColor, displayStr);
-
-    //int maxLength = 300;
-    //std::cout << length;
     if((this->scrollOffset-- + x) + length < 0) {
-        this->routeETAIndex = (this->routeETAIndex+1) % this->routeETAs.size(); // gets next routeETA_t
         this->scrollOffset = 150 - x;
     }
 
@@ -138,3 +155,24 @@ void AppalcartModule::fetchStopData(int stopID) {
         this->routeETAs.push_back(bus);
     }
 }
+
+// void AppalcartModule::loadColors() {
+//         for(auto routeEta : this->routeETAs) {
+//             std::string displayStr = "";
+//             colorString_t colorStr;
+//             // we are limited with color as its one big string. unfortunately.
+//             // the draw function only takes 1 color arg, and we have one
+//             // big string
+
+//             // solution: new vector
+
+//             fontColor = hexToRGB((routeEta.routeColor).c_str());
+//             displayStr += AppalcartModule::parseRouteETA(&routeEta);
+//             displayStr += "   ";
+//             colorStr.c = fontColor;
+//             colorStr.s = displayStr;
+
+//             // add to vector
+//             this->colorStrVec.push_back(colorStr);
+//         }
+// }

@@ -1,6 +1,8 @@
 #ifndef RENDER_H
 #define RENDER_H
 
+#include "ColorString.h"
+
 #include "led-matrix.h"
 #include "graphics.h"
 #include "AppalcartModule.h"
@@ -16,6 +18,6 @@
 #include <format>
 
 int displayText(rgb_matrix::Canvas * canvas, rgb_matrix::Font * font, int x, int y, rgb_matrix::Color color, std::string text);
-int busDisplayText(rgb_matrix::Canvas * canvas, rgb_matrix::Font * font, int x, int y, rgb_matrix::Color color, std::string busText);
-
+int busDisplayText(rgb_matrix::Canvas * canvas, rgb_matrix::Font * font, int x, int y, std::vector<colorString_t> colorStrVec);
+rgb_matrix::Color hexToRGB(const char *str);
 #endif // MATRIX_H

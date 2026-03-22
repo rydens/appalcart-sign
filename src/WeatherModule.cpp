@@ -68,18 +68,13 @@ int WeatherModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height,
         return -1;
     }
 
+    // total string to display
     std::string totalStr = "Current Temp: ";
-
     // temperature
     std::string temp = std::to_string(currentForecast.temperature); // get temperature
     temp += currentForecast.temperatureUnit;
 
-    // windspeed
-
-
-
     totalStr += temp;
-
     displayText(canvas, &mainFont, x, y, fontColor, totalStr);
 
     return 0;
