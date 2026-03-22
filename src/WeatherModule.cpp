@@ -1,8 +1,8 @@
-#include "weatherParser.h"
+#include "WeatherModule.h"
 
-WeatherModule::WeatherModule() : currentForecast{} {}
+//WeatherModule::WeatherModule() : currentForecast{} {}
 
-Forcast_t WeatherModule::parseForecast(){
+Forcast_t parseForecast(const cpr::Response& res) {
     Forcast_t result{};
 
     if(res.status_code != 200) {
@@ -20,7 +20,7 @@ Forcast_t WeatherModule::parseForecast(){
             return result;
         }
 
-    const json& period = data["properties"]["periods"][0]
+    const json& period = data["properties"]["periods"][0];
 
     result.temperature = period.value("temperature", 0);
     result.temperatureUnit = period.value("temperatureUnit", "");
@@ -35,19 +35,18 @@ Forcast_t WeatherModule::parseForecast(){
 
     if(!data.contains("relativeHumidity") ||
         !data["relativeHumidity"]["value"].is_null()){
-            result.relativeHumidity = period["relativeHumidity"].value("value",0);
+            result.humidityPercentage = period["relativeHumidity"].value("value",0);
     }
 
-    return result
+    return result;
 }
 
 void WeatherModule::execute(){
      cpr::Response res = cpr::Get(cpr::Url{FORECAST_URL});
-
      currentForecast = parseForecast(res);
-
 }
 
 int WeatherModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width){
+    return 0;
     // render function needs the hand of blaez
 }
