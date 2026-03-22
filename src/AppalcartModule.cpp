@@ -1,5 +1,6 @@
 #include "AppalcartModule.h"
 #include "render.h"
+#include "icon.h"
 
 /**
 * Constructor for Route Module
@@ -29,10 +30,16 @@ int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int heigh
 
     int xCurrent = 0;
     for (uint8_t index = 0; index < this->routeETAs.size(); index++) {
+        
         RouteETA_t * currentRoute = &this->routeETAs[index];
         std::string displayStr = parseRouteETA(currentRoute) + "   ";
         std::string colorStr = currentRoute->routeColor;
-        xCurrent += rgb_matrix::DrawText(canvas, mainFont, x + scrollOffset + xCurrent, y, hexStringToColor(colorStr.c_str()), displayStr.c_str());
+
+        Icon_t icon;
+        generateIcon(&icon, "B", hexStringToColor(colorStr.c_str()));
+        xCurrent += drawIcon(&icon, canvas, x + scrollOffset + xCurrent - 2, y - 7); // 7 is height
+        xCurrent += rgb_matrix::DrawText(canvas, mainFont, x + scrollOffset + xCurrent, y, hexStringToColor(colorStr.c_str()), displayStr.c_str());      
+
     }
 
     if (this->scrollOffset-- + xCurrent == 0) {
