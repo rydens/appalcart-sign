@@ -34,7 +34,8 @@ int main(int argc, char *argv[]) {
     matrixOptions.parallel = 1;
     matrixOptions.show_refresh_rate = true;
 
-    const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
+    AppalcartModule routeMod = AppalcartModule(37);
+    routeMod.execute();
 
     // load font
     rgb_matrix::Font mainFont;

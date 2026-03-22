@@ -1,15 +1,24 @@
-#include <vector>
-
-#include "Module.h"
-
 #ifndef APPALCART_MODULE_H
 #define APPALCART_MODULE_H
 
+#include <vector>
+#include <nlohmann/json.hpp>
+#include <cpr/cpr.h>
+
+#include "Module.h"
+
+using json = nlohmann::json;
+
 typedef struct {
-    uint8_t ETA;
-    std::string equipmentID;
-    std::string routeColor;
-    std::string routeName;
+    int ETA;                // minutes
+    int routeID;            // route ID
+    std::string abbr;           // route name abbreviation
+    std::string status;         // "On Time" or ETA or "-"
+    std::string time;           // xx:xx pm
+    std::string routeColor;     // Route color in hex
+    std::string equipmentID;    // Bus id "Bxx"
+    std::string routeName;      // color of route
+    std::string stopName;       // Bus stop name
 } RouteETA_t;
 
 class AppalcartModule : public Module {
@@ -23,7 +32,9 @@ class AppalcartModule : public Module {
         AppalcartModule(uint8_t stopID);
         void execute();
         int render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width);
-	static std::string parseRouteETA(RouteETA_t * routeEta);
+	    static std::string parseRouteETA(RouteETA_t * routeEta);
+        static json fetchRouteInfo(int routeID, int stopID);
+        void fetchStopData(int stopID);
 };
 
 #endif
