@@ -6,12 +6,19 @@
 * Constructor for Route Module
 *
 */
-AppalcartModule::AppalcartModule(uint8_t stopID) {
+AppalcartModule::AppalcartModule(uint8_t stopID, const char * bdfFontFile) {
     this->stopID = stopID;
     this->stopName = "";
     this->scrollOffset = 150;
     this->routeETAIndex = 0;
     this->routeETAs = std::vector<RouteETA_t>();
+
+
+    if (!this->mainFont.LoadFont(bdfFontFile)) {
+        std::cout << "couldn't load font file\n";
+        exit(0);
+    }
+
 }
 
 void AppalcartModule::execute() {
@@ -20,14 +27,6 @@ void AppalcartModule::execute() {
 }
 
 int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width) {
-    const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
-
-    // load font
-    rgb_matrix::Font mainFont;
-    if (!mainFont.LoadFont(bdfFontFile)) {
-        std::cout << "couldn't load font file\n";
-        return -1;
-    }
 
     int xCurrent = 0;
     xCurrent += rgb_matrix::DrawText(canvas, mainFont, x + scrollOffset, y, rgb_matrix::Color(255, 255, 255), this->stopName.c_str()) + 10;
@@ -37,10 +36,10 @@ int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int heigh
         std::string displayStr = parseRouteETA(currentRoute) + "  ";
         std::string colorStr = currentRoute->routeColor;
 
-        Icon_t icon;
-        generateIcon(&icon, "B", hexStringToColor(colorStr.c_str()));
-        xCurrent += drawIcon(&icon, canvas, x + scrollOffset + xCurrent - 2, y - 7); // 7 is height
-        xCurrent += rgb_matrix::DrawText(canvas, mainFont, x + scrollOffset + xCurrent, y, hexStringToColor(colorStr.c_str()), displayStr.c_str());      
+        //Icon_t icon;
+        //generateIcon(&icon, "B", hexStringToColor(colorStr.c_str()));
+        //xCurrent += drawIcon(&icon, canvas, x + scrollOffset + xCurrent - 2, y - 7); // 7 is height
+        xCurrent += rgb_matrix::DrawText(canvas, this->mainFont, x + scrollOffset + xCurrent, y, hexStringToColor(colorStr.c_str()), displayStr.c_str());      
 
     }
 

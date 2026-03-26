@@ -29,14 +29,16 @@ class AppalcartModule : public Module {
         int scrollOffset;
         uint8_t routeETAIndex;
         rgb_matrix::Color hexStringToColor(const char * s);
+    	rgb_matrix::Font mainFont;
 
     public:
-        AppalcartModule(uint8_t stopID);
+	AppalcartModule(uint8_t stopID, const char * bdfFontFile);
         void execute();
         int render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width);
 	    static std::string parseRouteETA(RouteETA_t * routeEta);
         static json fetchRouteInfo(int routeID, int stopID);
         void fetchStopData(int stopID);
+
 };
 
 #endif

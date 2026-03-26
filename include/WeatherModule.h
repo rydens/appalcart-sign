@@ -18,26 +18,25 @@ typedef struct {
     std::string windSpeed;
     std::string windDirection;
     std::string forcast;
-    int preciptaionPercetage;
+    int precipitationPercetage;
     int humidityPercentage;
 
     // time stuff
     int hour;
     int minute;
     std::string formatted; // "HH:MM"
-} Forcast_t;
+} Forecast_t;
 
 class WeatherModule : public Module {
     private:
-        Forcast_t currentForecast;
+        Forecast_t currentForecast;
     public:
         WeatherModule(); //const
 
         void execute();
         int render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width);
-        Forcast_t parseForecast(const cpr::Response& res);
+        void parseForecast(const cpr::Response res);
         // to get currnet forcast form outside
-        Forcast_t getForcast();
 };  
 
 #endif

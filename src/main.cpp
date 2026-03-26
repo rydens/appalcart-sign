@@ -31,15 +31,23 @@ static void InterruptHandler(int signo) {
 uint8_t endModules = 0;
 std::vector<Module*> mods;
 
-void moduleExecuteTask() {
-    for (Module* m : mods) {
-        m->execute();
-    }
+void moduleExecuteTask() {	
+    while(!endModules) {
+    	for (Module* m : mods) {
+       		m->execute();
+    	}
+    
     std::this_thread::sleep_for(std::chrono::seconds(5));
-    if (endModules) return;
+    }
 }
 
 int main(int argc, char *argv[]) {
+    
+	
+    const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
+
+    // load font
+    
     rgb_matrix::RGBMatrix::Options matrixOptions;
     matrixOptions.hardware_mapping = "regular";
     matrixOptions.cols = 128;
@@ -48,9 +56,9 @@ int main(int argc, char *argv[]) {
     matrixOptions.parallel = 1;
     matrixOptions.show_refresh_rate = true;
 
-    AppalcartModule routeMod1 = AppalcartModule(37);
+    AppalcartModule routeMod1 = AppalcartModule(46, bdfFontFile);
     routeMod1.execute();
-    AppalcartModule routeMod2 = AppalcartModule(36);
+    AppalcartModule routeMod2 = AppalcartModule(37, bdfFontFile);
     routeMod2.execute();
     WeatherModule weatherMod = WeatherModule();
     weatherMod.execute();
@@ -61,7 +69,6 @@ int main(int argc, char *argv[]) {
     std::thread moduleExecutor(moduleExecuteTask);
 
     //load font
-    const char *bdfFontFile = "fonts/HaxorMedium-10.bdf";
 
     rgb_matrix::Font mainFont;
     if (!mainFont.LoadFont(bdfFontFile)) {
@@ -96,6 +103,10 @@ int main(int argc, char *argv[]) {
         for(int i = 0; i < 3; i++) {
             Module* mod = mods[i];
             if(mod->render(swapCanvas, 0, pos1 + (i * 10), writeHeight, writeWidth)) {
+		canvas->Clear();
+		delete canvas;
+    		endModules = 1;
+    		moduleExecutor.join();
                 std::cout << "error render error";
                 return -1;
             }
