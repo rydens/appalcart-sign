@@ -70,11 +70,8 @@ int main(int argc, char *argv[]) {
 
     //load font
 
-    rgb_matrix::Font mainFont;
-    if (!mainFont.LoadFont(bdfFontFile)) {
-        std::cout << "couldn't load font file\n";
-        return -1;
-    }
+    rgb_matrix::Font mainFont = routeMod1.getFont();
+
 
     rgb_matrix::RGBMatrix * canvas = rgb_matrix::RGBMatrix::CreateFromFlags(&argc, &argv, &matrixOptions);
     if(canvas == NULL) return 1;

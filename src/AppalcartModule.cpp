@@ -29,16 +29,16 @@ void AppalcartModule::execute() {
 int AppalcartModule::render(rgb_matrix::Canvas * canvas, int x, int y, int height, int width) {
 
     int xCurrent = 0;
-    xCurrent += rgb_matrix::DrawText(canvas, mainFont, x + scrollOffset, y, rgb_matrix::Color(255, 255, 255), this->stopName.c_str()) + 10;
+    xCurrent += rgb_matrix::DrawText(canvas, this->mainFont, x + scrollOffset, y, rgb_matrix::Color(255, 255, 255), this->stopName.c_str()) + 10;
     for (uint8_t index = 0; index < this->routeETAs.size(); index++) {
         
         RouteETA_t * currentRoute = &this->routeETAs[index];
         std::string displayStr = parseRouteETA(currentRoute) + "  ";
         std::string colorStr = currentRoute->routeColor;
 
-        //Icon_t icon;
-        //generateIcon(&icon, "B", hexStringToColor(colorStr.c_str()));
-        //xCurrent += drawIcon(&icon, canvas, x + scrollOffset + xCurrent - 2, y - 7); // 7 is height
+        Icon_t icon;
+        generateIcon(&icon, "B", hexStringToColor(colorStr.c_str()));
+        xCurrent += drawIcon(&icon, canvas, x + scrollOffset + xCurrent - 2, y - 7); // 7 is height
         xCurrent += rgb_matrix::DrawText(canvas, this->mainFont, x + scrollOffset + xCurrent, y, hexStringToColor(colorStr.c_str()), displayStr.c_str());      
 
     }
@@ -162,4 +162,8 @@ rgb_matrix::Color AppalcartModule::hexStringToColor(const char * s) {
     uint8_t r, g, b;
     sscanf(s, "#%02hhx%02hhx%02hhx", &r, &g, &b);
     return rgb_matrix::Color(r, b, g);
+}
+
+rgb_matrix::Font AppalcartModule::getFont() {
+    return this->mainFont;
 }
